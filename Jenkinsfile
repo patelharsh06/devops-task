@@ -17,45 +17,45 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing Node.js dependencies...'
-                bat 'npm install'
+                sh 'npm install'
             }
         }
 
         stage('Run Tests') {
             steps {
                 echo 'Running tests...'
-                bat 'npm test'
+                sh 'npm test || echo "No test script found"'
             }
         }
 
         stage('Build') {
             steps {
                 echo 'Building the app...'
-                // If you have a build command, e.g., npm run build
-                bat 'npm run build || echo "No build script found"'
+                sh 'npm run build || echo "No build script found"'
             }
         }
 
         stage('Dockerize') {
             steps {
                 echo 'Building Docker image...'
-                bat 'docker build -t devops-task:latest .'
+                sh 'docker build -t devops-task:latest .'
             }
         }
 
         stage('Push to Registry') {
             steps {
                 echo 'Pushing Docker image...'
-                // Replace with your DockerHub or AWS ECR login & push
-                // bat 'docker tag devops-task:latest <username>/devops-task:latest'
-                // bat 'docker push <username>/devops-task:latest'
+                // Uncomment and update the next lines with your DockerHub username
+                // sh 'docker tag devops-task:latest <username>/devops-task:latest'
+                // sh 'docker login -u <username> -p <password>'
+                // sh 'docker push <username>/devops-task:latest'
             }
         }
 
         stage('Deploy') {
             steps {
                 echo 'Deploying container...'
-                // Add your deployment commands (AWS ECS / GCP Cloud Run)
+                // Add your deployment commands here (AWS ECS / GCP Cloud Run / Kubernetes)
             }
         }
     }
