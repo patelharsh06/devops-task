@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NODE_VERSION = '18' // Node.js version
+        NODE_VERSION = '18' 
     }
 
     stages {
@@ -10,7 +10,7 @@ pipeline {
             steps {
                 git branch: 'dev', 
                     url: 'https://github.com/patelharsh06/devops-task.git',
-                    credentialsId: 'github-credentials'
+                    credentialsId: 'github-credentials' 
             }
         }
 
@@ -45,9 +45,9 @@ pipeline {
         stage('Push to Registry') {
             steps {
                 echo 'Pushing Docker image...'
-                // Uncomment and update the next lines with your DockerHub username
-                // sh 'docker tag devops-task:latest <username>/devops-task:latest'
+                // Uncomment and update the next lines if using DockerHub
                 // sh 'docker login -u <username> -p <password>'
+                // sh 'docker tag devops-task:latest <username>/devops-task:latest'
                 // sh 'docker push <username>/devops-task:latest'
             }
         }
@@ -55,7 +55,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying container...'
-                // Add your deployment commands here (AWS ECS / GCP Cloud Run / Kubernetes)
+                // Add your deployment commands (AWS ECS / GCP Cloud Run)
             }
         }
     }
