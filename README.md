@@ -27,15 +27,15 @@ The pipeline automates the process of building, testing, containerizing, pushing
 
 ---
 
-## Architecture Diagram
-![Architecture Diagram](./docs/architecture.png)
+## Architecture workflow
+
 
 > Diagram shows the flow: GitHub → Jenkins → Docker → AWS ECR → ECS Fargate → CloudWatch Monitoring
 
 ---
 ## Deployment Proof
 
-- Screenshots (included in repository `deployment-proof/` folder) showing:
+- Screenshots (included in repository `image/` folder) showing:
   - Jenkins pipeline successful build
   - ECS service running
   - CloudWatch logs streaming
