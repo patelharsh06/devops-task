@@ -5,10 +5,10 @@ pipeline {
         NODE_VERSION = '18'
         DOCKER_IMAGE = "devops-task:latest"
         DOCKER_REPO = "harshpatel04/devops-task:latest" 
-        AWS_REGION = 'us-east-1'        // Update to your AWS region
-        ECS_CLUSTER = 'devops-cluster'  // Your ECS cluster name
-        ECS_SERVICE = 'devops-service'  // Your ECS service name
-        ECS_TASK_DEF = 'devops-task'    // Your ECS task definition name
+        AWS_REGION = 'eu-north-1'        // Update to your AWS region
+        ECS_CLUSTER = 'devops-task-cluster'  // Your ECS cluster name
+        ECS_SERVICE = 'devops-task-service'  // Your ECS service name
+        ECS_TASK_DEF = 'devops-task-family'    // Your ECS task definition name
     }
 
     stages {
@@ -64,13 +64,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying container to AWS ECS...'
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
+                withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
                     sh """
                         aws ecs update-service \
                         --cluster ${ECS_CLUSTER} \
                         --service ${ECS_SERVICE} \
-                        --force-new-deployment \
-                        --region ${AWS_REGION}
+                        --force-new-deployment
                     """
                 }
             }
