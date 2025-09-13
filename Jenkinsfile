@@ -5,6 +5,10 @@ pipeline {
         NODE_VERSION = '18'
         DOCKER_IMAGE = "devops-task:latest"
         DOCKER_REPO = "harshpatel04/devops-task:latest" 
+        AWS_REGION = 'us-east-1'        // Update to your AWS region
+        ECS_CLUSTER = 'devops-cluster'  // Your ECS cluster name
+        ECS_SERVICE = 'devops-service'  // Your ECS service name
+        ECS_TASK_DEF = 'devops-task'    // Your ECS task definition name
     }
 
     stages {
@@ -46,7 +50,7 @@ pipeline {
 
         stage('Push to Registry') {
             steps {
-                echo 'Pushing Docker image...'
+                echo 'Pushing Docker image to DockerHub...'
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh """
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
@@ -59,8 +63,16 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo 'Deploying container...'
-                
+                echo 'Deploying container to AWS ECS...'
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
+                    sh """
+                        aws ecs update-service \
+                        --cluster ${ECS_CLUSTER} \
+                        --service ${ECS_SERVICE} \
+                        --force-new-deployment \
+                        --region ${AWS_REGION}
+                    """
+                }
             }
         }
     }
