@@ -2,7 +2,9 @@ pipeline {
     agent any
 
     environment {
-        NODE_VERSION = '18' 
+        NODE_VERSION = '18'
+        DOCKER_IMAGE = "devops-task:latest"
+        DOCKER_REPO = "harshpatel04/devops-task:latest" 
     }
 
     stages {
@@ -38,24 +40,27 @@ pipeline {
         stage('Dockerize') {
             steps {
                 echo 'Building Docker image...'
-                sh 'docker build -t devops-task:latest .'
+                sh "docker build -t ${DOCKER_IMAGE} ."
             }
         }
 
         stage('Push to Registry') {
             steps {
                 echo 'Pushing Docker image...'
-                // Uncomment and update the next lines if using DockerHub
-                // sh 'docker login -u <username> -p <password>'
-                // sh 'docker tag devops-task:latest <username>/devops-task:latest'
-                // sh 'docker push <username>/devops-task:latest'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh """
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker tag ${DOCKER_IMAGE} ${DOCKER_REPO}
+                        docker push ${DOCKER_REPO}
+                    """
+                }
             }
         }
 
         stage('Deploy') {
             steps {
                 echo 'Deploying container...'
-                // Add your deployment commands (AWS ECS / GCP Cloud Run)
+                
             }
         }
     }
